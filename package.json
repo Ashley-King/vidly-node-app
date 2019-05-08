@@ -1,0 +1,25 @@
+{
+  "name": "vidly",
+  "version": "1.0.0",
+  "description": "a video rental app simulator",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Ashley-King/vidly-node-app.git"
+  },
+  "author": "Ashley King",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Ashley-King/vidly-node-app/issues"
+  },
+  "homepage": "https://github.com/Ashley-King/vidly-node-app#readme",
+  "dependencies": {
+    "@hapi/joi": "^15.0.2",
+    "dotenv": "^8.0.0",
+    "express": "^4.16.4",
+    "nodemon": "^1.19.0"
+  }
+}
