@@ -7,70 +7,79 @@ const validateName = require("../middleware/validateName");
 const error404Message = "That one ain't here, yo.";
 // create genres
 
-const Genre = mongoose.model(
-  "Genre",
+const Customer = mongoose.model(
+  "Customer",
   new mongoose.Schema({
     name: {
       type: String,
       required: true,
       minlength: 5,
       maxlength: 50
-    }
+    },
+    isGold: {
+      type: Boolean,
+      required: true,
+      default: false
+    },
+    phone: Number
   })
 );
-
-//get list of genres
+// get list of customers
 router.get("/", async (req, res) => {
-  const genres = await Genre.find().sort("name");
-  res.send(genres);
+  const customers = await Customer.find().sort("name");
+  res.send(customers);
 });
 
-//get a single genre
-router.get("/:id", async (req, res) => {
-  try {
-    const genre = await Genre.findById(req.params.id);
-    res.send(genre);
-  } catch {
-    return res.status(404).send(`${error404Message}`);
-  }
-});
-
-// create a genre
+//create a customer
 router.post("/", async (req, res) => {
   const result = validateName(req.body);
+  //console.log(result.error.details);
 
   if (result.error)
     return res.status(400).send(result.error.details[0].message);
-  let genre = new Genre({ name: req.body.name });
-  genre = await genre.save();
-  res.send(genre);
+
+  let customer = new Customer({ name: req.body.name });
+  customer = await customer.save();
+  res.send(customer);
 });
 
-//update a genre
+//get a single customer
+router.get("/:id", async (req, res) => {
+  try {
+    const customer = await Customer.findById(req.params.id);
+    res.send(customer);
+  } catch {
+    return res.status(404).send(`${error404Message}`);
+  }
+  
+});
+
+//update a customer
 router.put("/:id", async (req, res) => {
   const result = validateName(req.body);
   if (result.error)
     return res.status(400).send(result.error.details[0].message);
   try {
-    const genre = await Genre.findByIdAndUpdate(
+    const customer = await Customer.findByIdAndUpdate(
       req.params.id,
       { name: req.body.name },
       { new: true }
-    ); //get updated obj
-    res.send(genre);
+    );
+    res.send(customer);
   } catch {
     return res.status(404).send(`${error404Message}`);
   }
-}); //put
+});
 
-// delete genre
+//delete customer
 router.delete("/:id", async (req, res) => {
   try {
-    const genre = await Genre.findByIdAndRemove(req.params.id);
-    res.send(genre);
+    const customer = await Customer.findByIdAndDelete(req.params.id);
+    res.send(customer);
   } catch {
-    res.status(404).send(`${error404Message}`);
+    return res.status(404).send(`${error404Message}`);
   }
+  
 });
 
 module.exports = router;
