@@ -1,23 +1,10 @@
-const mongoose = require("mongoose");
 const express = require("express");
 const router = express.Router();
-const validateName = require("../middleware/validateName");
+const { Genre, validate } = require("../models/genre");
 
 // error status message
 const error404Message = "That one ain't here, yo.";
 // create genres
-
-const Genre = mongoose.model(
-  "Genre",
-  new mongoose.Schema({
-    name: {
-      type: String,
-      required: true,
-      minlength: 5,
-      maxlength: 50
-    }
-  })
-);
 
 //get list of genres
 router.get("/", async (req, res) => {
@@ -37,7 +24,7 @@ router.get("/:id", async (req, res) => {
 
 // create a genre
 router.post("/", async (req, res) => {
-  const result = validateName(req.body);
+  const result = validate(req.body);
 
   if (result.error)
     return res.status(400).send(result.error.details[0].message);
@@ -48,7 +35,7 @@ router.post("/", async (req, res) => {
 
 //update a genre
 router.put("/:id", async (req, res) => {
-  const result = validateName(req.body);
+  const result = validate(req.body);
   if (result.error)
     return res.status(400).send(result.error.details[0].message);
   try {

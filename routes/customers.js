@@ -1,29 +1,13 @@
-const mongoose = require("mongoose");
+const {Customer, validate} = require('../models/customer')
 const express = require("express");
 const router = express.Router();
-const validateName = require("../middleware/validateName");
+
 
 // error status message
 const error404Message = "That one ain't here, yo.";
 // create genres
 
-const Customer = mongoose.model(
-  "Customer",
-  new mongoose.Schema({
-    name: {
-      type: String,
-      required: true,
-      minlength: 5,
-      maxlength: 50
-    },
-    isGold: {
-      type: Boolean,
-      required: true,
-      default: false
-    },
-    phone: Number
-  })
-);
+
 // get list of customers
 router.get("/", async (req, res) => {
   const customers = await Customer.find().sort("name");
@@ -32,13 +16,15 @@ router.get("/", async (req, res) => {
 
 //create a customer
 router.post("/", async (req, res) => {
-  const result = validateName(req.body);
-  //console.log(result.error.details);
-
+  const result = validate(req.body);
   if (result.error)
     return res.status(400).send(result.error.details[0].message);
 
-  let customer = new Customer({ name: req.body.name });
+  let customer = new Customer({
+    name: req.body.name,
+    phone: req.body.phone,
+    isGold: req.body.isGold
+  });
   customer = await customer.save();
   res.send(customer);
 });
@@ -51,18 +37,18 @@ router.get("/:id", async (req, res) => {
   } catch {
     return res.status(404).send(`${error404Message}`);
   }
-  
 });
 
 //update a customer
 router.put("/:id", async (req, res) => {
-  const result = validateName(req.body);
+  const result = validate(req.body);
+
   if (result.error)
     return res.status(400).send(result.error.details[0].message);
   try {
     const customer = await Customer.findByIdAndUpdate(
       req.params.id,
-      { name: req.body.name },
+      { name: req.body.name, phone: req.body.phone, isGold: req.body.isGold },
       { new: true }
     );
     res.send(customer);
@@ -79,7 +65,6 @@ router.delete("/:id", async (req, res) => {
   } catch {
     return res.status(404).send(`${error404Message}`);
   }
-  
 });
 
 module.exports = router;
